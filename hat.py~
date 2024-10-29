@@ -1,0 +1,36 @@
+import copy
+import random
+
+
+class Hat:
+    def __init__(self, **kwargs):
+        self.contents = [key for key, value in kwargs.items() for i in range(0, value)]
+
+    def remove(self, choice):
+        try:
+            self.contents.remove(choice)
+            return choice
+        except ValueError:
+            return None
+
+    def draw(self, number):
+        if number <= len(self.contents):
+            return [self.remove(random.choice(self.contents)) for i in range(0, number)]
+        else:
+            drowned_contents = [item for item in self.contents]
+            self.contents = []
+            return drowned_contents
+
+
+def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
+    num_of_success = 0
+
+    for _ in range(0, num_experiments):
+        copied_hat = copy.deepcopy(hat)
+        drowned_balls = copied_hat.draw(num_balls_drawn)
+        results = [value <= drowned_balls.count(ball) for ball, value in expected_balls.items()]
+        if all(results):
+            num_of_success += 1
+
+    return num_of_success / num_experiments
+
